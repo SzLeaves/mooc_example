@@ -1,0 +1,230 @@
+{% extends 'base-content.html' %}
+
+{% load static %}
+{% block title %}{{ teacher.name }}的信息-慕学在线{% endblock %}
+
+{% block nav %}
+    <section>
+        <div class="wp">
+            <ul class="crumbs">
+                <li><a href="{% url 'index' %}">首页</a>></li>
+                <li><a href="{% url 'orgs:list_teachers' %}">课程讲师</a>></li>
+                <li><a href="{% url 'orgs:teachers_info' teacher.id %}">讲师详情</a></li>
+            </ul>
+        </div>
+    </section>
+{% endblock %}
+
+{% block main_content %}
+    <section>
+        <div class="wp butler-detail-box butler-diaryd-box clearfix">
+            <div class="fl list">
+                <div class="butler_detail_list clearfix">
+                    <div class="brief">
+                        <dl class="des">
+                            <dt>
+                                <div class="picpic">
+                                    <img width="100" height="100"
+                                         src="{{ MEDIA_URL }}{{ teacher.images }}" alt=""/>
+                                </div>
+                                <div class="btn" style="display: flex; justify-content: center">
+                                <span class="btn1 collectionbtn" id="jsLeftBtn">
+                                    {% if has_teacher_fav %}
+                                        已收藏
+                                    {% else %}
+                                        收藏
+                                    {% endif %}
+                                </span>
+                                </div>
+                            </dt>
+                            <dd>
+                                <a href="{% url 'orgs:teachers_info' teacher.id %}">
+                                    <h1>{{ teacher.name }}
+                                        {% if teacher.is_approval %}
+                                            <span class="key picbig">金牌讲师</span>
+                                        {% endif %}
+                                    </h1>
+                                </a>
+                                <ul class="cont">
+                                    <li>工作年限：<span>{{ teacher.work_years }}</span></li>
+                                    <li>就职公司：<span>{{ teacher.work_company }}</span></li>
+                                    <li>工作职位：<span>{{ teacher.work_position }}&nbsp;</span></li>
+                                    <li>教学特点：<span>{{ teacher.specialty }}</span></li>
+                                </ul>
+                            </dd>
+                        </dl>
+                    </div>
+                </div>
+
+                <div class="butler_detail_cont clearfix">
+                    <div class="head">
+                        <ul class="tab_header">
+                            <li class="active" style="color: black">全部课程</li>
+                        </ul>
+                    </div>
+                    <div class="left layout">
+                        <!-- 课程信息 -->
+                        <div class="companycenter">
+                            <div class="group_list brief">
+                                {% for item in courses.object_list %}
+                                    <div class="module1_5 box">
+                                        <a href="{% url 'courses:course_detail' item.id %}">
+                                            <img width="214" height="190" class="scrollLoading"
+                                                 src="{{ MEDIA_URL }}{{ item.images }}"
+                                                 alt=""/>
+                                        </a>
+                                        <div class="des">
+                                            <a href="{% url 'courses:course_detail' item.id %}">
+                                                <h2>{{ item.name }}</h2>
+                                            </a>
+                                            <span class="fl">时长：<i class="key">{{ item.study_times }}</i></span>
+                                            <span class="fr">学习人数：{{ item.students_num }}</span>
+                                        </div>
+                                        <div class="bottom">
+                                            <span class="fl">{{ item.organization.name }}</span>
+                                            <span class="star fr  notlogin" data-favid="15">
+                                                {{ item.favourite_num }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+
+                            <!-- 分页按钮 -->
+                            <div class="pageturn">
+                                <ul class="pagelist">
+                                    <!-- 上一页 -->
+                                    {% if courses.has_previous %}
+                                        <li class="long"><a
+                                                href="?{{ courses.previous_page_number.querystring }}">上一页</a>
+                                        </li>
+                                    {% endif %}
+
+                                    <!-- 中间页码 -->
+                                    {% for page in courses.pages %}
+                                        {% if page %}
+                                            {% ifequal page courses.number %}
+                                                <!-- 显示当前页码样式 -->
+                                                <li class="active"><a href="?{{ page.querystring }}">{{ page }}</a>
+                                                </li>
+                                            {% else %}
+                                                <!-- 显示非当前页码样式 -->
+                                                <li><a href="?{{ page.querystring }}" class="page">{{ page }}</a>
+                                                </li>
+                                            {% endifequal %}
+                                        {% else %}
+                                            <!-- 省略页码样式 -->
+                                            <li class="none"><a href="">...</a></li>
+                                        {% endif %}
+                                    {% endfor %}
+
+                                    <!-- 下一页 -->
+                                    {% if courses.has_next %}
+                                        <li class="long"><a
+                                                href="?{{ courses.next_page_number.querystring }}">下一页</a>
+                                        </li>
+                                    {% endif %}
+                                </ul>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- 侧栏 -->
+            <div class="fr list">
+                <!-- 教师所属机构信息 -->
+                <div class="butler_detail_list">
+                    <div class="right butler-company-box">
+                        <div class="head">
+                            <h1>{{ org.name }}</h1>
+                            <p>知名高校，权威教学</p>
+                        </div>
+                        <div class="pic">
+                            <a href="{% url 'orgs:home' org.id %}">
+                                <img width="150" height="80" src="{{ MEDIA_URL }}{{ org.images }}" alt=""/>
+                            </a>
+                        </div>
+                        <a href="{% url 'orgs:desc' org_id %}">
+                            <h2 class="center">{{ org.name }}</h2>
+                        </a>
+                        <p class="center tell">地址：{{ org.city }}</p>
+                        <a class="btn" id="jsRightBtn">
+                            {% if has_org_fav %}
+                                已收藏
+                            {% else %}
+                                收藏
+                            {% endif %}
+                        </a>
+                    </div>
+                </div>
+                <div class="butler_detail_cont">
+                    <div class="butler_list_box">
+
+                        <!-- 排名 -->
+                        <div class="right layout">
+                            <div class="head">讲师排行榜</div>
+                            {% for hot in hot_teachers %}
+                                <dl class="des">
+                                    <span class="num fl">{{ forloop.counter }}</span>
+                                    <a href="{% url 'orgs:teachers_info' hot.id %}">
+                                        <dt>
+                                            <img width="50" height="50" class="scrollLoading"
+                                                 src="{{ MEDIA_URL }}{{ hot.images }}" alt=""/>
+                                        </dt>
+                                    </a>
+                                    <dd>
+                                        <a href="{% url 'orgs:teachers_info' hot.id %}">
+                                            <h1 title="bobby">{{ hot.name }}</h1>
+                                        </a>
+                                        <p>工作年限：<span>{{ hot.work_years }}</span></p>
+                                    </dd>
+                                </dl>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
+
+{% block external_js %}
+    <script>
+        function add_fav(current_elem, fav_id, fav_type) {
+            $.ajax({
+                cache: false,
+                type: "POST",
+                url: "{% url 'operations:add_fav' %}",
+                data: {'fav_id': fav_id, 'fav_type': fav_type},
+                async: true,
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
+                },
+                success: function (data) {
+                    if (data.status === 'fail') {
+                        if (data.msg === '用户未登录') {
+                            window.location.href = "{% url 'users:login' %}";
+                        } else {
+                            alert(data.msg)
+                        }
+
+                    } else if (data.status === 'success') {
+                        current_elem.text(data.msg)
+                    }
+                },
+            });
+        }
+
+        $('#jsLeftBtn').on('click', function () {
+            // 课程教师收藏
+            add_fav($(this), {{ teacher.id }}, 3);
+        });
+
+        $('#jsRightBtn').on('click', function () {
+            // 课程机构收藏
+            add_fav($(this), {{ org.id }}, 2);
+        });
+    </script>
+{% endblock %}

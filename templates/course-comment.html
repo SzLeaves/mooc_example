@@ -1,0 +1,280 @@
+{% extends 'base-content.html' %}
+{% load static %}
+
+{% block title %}{{ course.name }}-评论{% endblock %}
+
+{% block external %}
+    <link rel="stylesheet" href="{% static 'css/muke/course/learn-less.css' %}"/>
+    <link rel="stylesheet" href="{% static 'css/muke/course/course-comment.css' %}"/>
+    <link rel="stylesheet" href="{% static 'css/muke/base.css' %}">
+    <link rel="stylesheet" href="{% static 'css/muke/common-less.css' %}">
+    <link rel="stylesheet" href="{% static 'css/muke/course/common-less.css' %}">
+    <link rel="stylesheet" href="{% static 'css/mooc.css' %}"/>
+{% endblock %}
+
+{% block nav %}
+    <section>
+        <div class="wp">
+            <div class="crumbs">
+                <ul>
+                    <li><a href="{% url 'index' %}">首页</a>></li>
+                    <li><a href="{% url 'courses:list' %}">公开课程</a>></li>
+                    <li><a href="{% url 'courses:course_detail' course.id %}">课程详情</a>></li>
+                    <li>课程评论</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+{% endblock %}
+
+{% block main_content %}
+    <div id="main">
+        <div class="course-infos">
+            <div class="w pr" style="border-radius: 15px">
+                <div style="height: 15px" class="path">
+                </div>
+                <div class="hd">
+                    <h2 class="l" style="padding: 6px 15px; font-size: 1.8em">{{ course.name }}</h2>
+                </div>
+                <div class="statics clearfix">
+                    <div class="static-item ">
+                        <span class="meta-value"><strong>{{ course.get_difficulty_display }}</strong></span>
+                        <span class="meta">难度</span>
+                        <em></em>
+                    </div>
+                    <div class="static-item static-time">
+                        <span class="meta-value">{{ course.study_times }}</span>
+                        <span class="meta">时长</span>
+                        <em></em>
+                    </div>
+                    <div class="static-item">
+                        <span class="meta-value"><strong>{{ course.students_num }}</strong></span>
+                        <span class="meta">学习人数</span>
+                        <em></em>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="course-info-main clearfix w has-progress">
+            <div class="info-bar clearfix">
+                <div class="content-wrap clearfix">
+                    <div class="content">
+                        <div class="mod-tab-menu">
+                            <ul class="course-menu clearfix">
+                                <li><a class="ui-tabs-active " id="learnOn"
+                                       href="{% url 'courses:course_videos' course.id %}"><span>章节</span></a></li>
+                                <li><a id="commentOn" class="active"
+                                       href="{% url 'courses:course_comments' course.id %}"><span>评论</span></a>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <!--发布评论-->
+                        <div id="js-pub-container" class="issques clearfix js-form">
+                            <div class="wgt-ipt-wrap pub-editor-wrap " id="js-pl-input-fake">
+                                <textarea id="js-pl-textarea" class=""
+                                          placeholder="扯淡、吐槽、表扬、鼓励……想说啥就说啥！"></textarea>
+                            </div>
+                            <input type="button" id="js-pl-submit" class="pub-btn" data-cid="452" value="发表评论">
+                            <p class="global-errortip js-global-error"></p>
+                        </div>
+                        <div id="course_note">
+                            <ul class="mod-post" id="comment-list">
+                                {% for item in comments %}
+                                    <li class="post-row">
+                                        <div class="media">
+                                        <span><img src="{{ MEDIA_URL }}{{ item.user.image }}" width='40'
+                                                   height='40' alt=""/></span>
+                                        </div>
+                                        <div class="bd">
+                                            <div class="tit">
+                                                <span>
+                                                    {% if item.user.nickname == '' %}
+                                                        {{ item.user.username }}
+                                                    {% else %}
+                                                        {{ item.user.nickname }}
+                                                    {% endif %}
+                                                </span>
+                                            </div>
+                                            <p class="cnt">{{ item.comments }}</p>
+                                            <div class="footer clearfix">
+                                                <span title="创建时间" class="l timeago">时间：{{ item.add_time }}</span>
+                                                {% ifequal item.user.id request.user.id %}
+                                                    <span class="delete-group fr jsDelete_comment"
+                                                          data-comment-id="{{ item.id }}"></span>
+                                                {% endifequal %}
+                                            </div>
+                                        </div>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="aside r">
+                        <div class="bd">
+
+                            <div class="box mb40">
+                                <h4>资料下载</h4>
+                                <ul class="downlist">
+                                    {% for rec in resource %}
+                                        <li>
+                                            <span><i class="aui-iconfont aui-icon-file"></i>{{ rec.name }}</span>
+                                            <a href="{{ MEDIA_URL }}{{ rec.path }}" class="downcode"
+                                               target="_blank" download="" data-id="274" title="">下载</a>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                            <div class="box mb40">
+                                <h4>讲师提示</h4>
+                                <div class="teacher-info">
+                                    <a href="" target="_blank">
+                                        <img src="{{ MEDIA_URL }}{{ course.teachers.images }}" width='80'
+                                             height='80' alt=""/>
+                                    </a>
+                                    <span class="tit">
+                                        <a href="" target="_blank">
+                                            {{ course.teachers.name }}
+                                        </a>
+                                    </span>
+                                    <span class="job">{{ course.teachers.work_position }}</span>
+                                </div>
+                                <div class="course-info-tip">
+                                    <dl class="first">
+                                        <dt>课程须知</dt>
+                                        <dd class="autowrap">{{ course.notice }}</dd>
+                                    </dl>
+                                    <dl>
+                                        <dt>老师告诉你能学到什么？</dt>
+                                        <dd class="autowrap">{{ course.knowledge }}</dd>
+                                    </dl>
+                                </div>
+                            </div>
+
+                            <div class="cp-other-learned  js-comp-tabs">
+                                <div class="cp-header clearfix">
+                                    <h2 class="cp-tit l">该课的同学还学过</h2>
+                                </div>
+                                <div class="cp-body">
+                                    <div class="cp-tab-pannel js-comp-tab-pannel" data-pannel="course"
+                                         style="display: block">
+                                        <!-- img 200 x 112 -->
+                                        <ul class="other-list">
+                                            {% for item in relate_courses %}
+                                                <li class="curr">
+                                                    <a href="{% url 'courses:course_detail' item.id %}" target="_blank">
+                                                        <img src="{{ MEDIA_URL }}{{ item.images }}"
+                                                             alt="{{ item.name }}">
+                                                        <span class="name autowrap">{{ item.name }}</span>
+                                                    </a>
+                                                </li>
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--提示弹出框-->
+    <div class="dialog" id="jsDialog">
+        <div class="successbox dialogbox" id="jsSuccessTips">
+            <h1>成功提交</h1>
+            <div class="close jsCloseDialog"><img src="{% static 'images/dig_close.png' %}"/></div>
+            <div class="cont">
+                <h2>您的需求提交成功！</h2>
+                <p></p>
+            </div>
+        </div>
+
+        <div class="bidtips dialogbox promptbox" id="jsComfirmDialig">
+            <h1>确认提交</h1>
+            <div class="close jsCloseDialog"><img src="{% static 'images/dig_close.png' %}" alt=""/></div>
+            <div class="cont">
+                <h2>您确认提交吗？</h2>
+                <dd class="autoTxtCount">
+                    <div class="button">
+                        <input type="button" class="fl half-btn" value="确定" id="jsComfirmBtn"/>
+                        <span class="fr half-btn jsCloseDialog">取消</span>
+                    </div>
+                </dd>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+
+{% block external_js %}
+    <script>
+        //添加评论
+        $('#js-pl-submit').on('click', function () {
+            const comments = $("#js-pl-textarea").val();
+            if (comments === "") {
+                alert("评论不能为空")
+                return
+            }
+            $.ajax({
+                cache: false,
+                type: "POST",
+                url: "{% url 'operations:add_comments' %}",
+                data: {'course_id': {{ course.id }}, 'comments': comments},
+                async: true,
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
+                },
+                success: function (data) {
+                    if (data.status === 'fail') {
+                        if (data.msg === '用户未登录') {
+                            window.location.href = "{% url 'users:login' %}";
+                        } else {
+                            alert(data.msg)
+                        }
+
+                    } else if (data.status === 'success') {
+                        window.location.reload();//刷新当前页面.
+                    }
+                },
+                error: function () {
+                    console.log('error')
+                }
+            });
+        });
+
+        // 删除评论
+        var del_comment_id = null;
+        $('.jsDelete_comment').on('click', function () {
+            var _this = $(this)
+            del_comment_id = _this.attr('data-comment-id');
+            Dml.fun.showComfirmDialog({
+                h1: '删除评论',
+                h2: '您确认删除该评论吗？',
+            });
+        });
+        $('#jsComfirmBtn').click(function () {
+                $.ajax({
+                    cache: false,
+                    type: "POST",
+                    url: "{% url 'operations:del_comments' %}",
+                    data: {
+                        comment_id: del_comment_id,
+                        csrfmiddlewaretoken: '{{ csrf_token }}'
+                    },
+                    async: true,
+                    success: function () {
+                        Dml.fun.showTipsDialog({
+                            title: '删除评论',
+                            h2: '删除该评论成功！',
+                        });
+                        // 刷新页面
+                        Dml.fun.winReload();
+                    }
+                })
+            }
+        );
+    </script>
+{% endblock %}

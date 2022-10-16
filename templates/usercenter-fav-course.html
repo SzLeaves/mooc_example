@@ -1,0 +1,79 @@
+{% extends 'base-users.html' %}
+{% load static %}
+
+{% block title %}个人中心-我的收藏{% endblock %}
+{% block crumb-nav %}
+    <ul class="crumbs">
+        <li><a href="{% url 'index' %}">首页</a>></li>
+        <li><a href="{% url 'users:user_info' %}">个人中心</a>></li>
+        <li>我的收藏</li>
+    </ul>
+{% endblock %}
+
+{% block right_title %}我的收藏{% endblock %}
+
+{% block right_tab %}
+    <div class="head">
+        <ul class="tab_header messagehead">
+            <li><a href="{% url 'users:my_favourite' 'org' %}">课程机构</a></li>
+            <li><a href="{% url 'users:my_favourite' 'teacher' %}">授课教师</a></li>
+            <li class="active"><a href="{% url 'users:my_favourite' 'courses' %}">公开课程</a></li>
+        </ul>
+    </div>
+{% endblock %}
+
+{% block right_content %}
+    {# 没有数据显示时调用父模板的显示内容 #}
+    {% ifequal my_courses.count 0 %}
+        {{ block.super }}
+    {% else %}
+        <div class="companycenter" style="width: 110%">
+            <div class="group_list brief">
+                {% for item in my_courses %}
+                    <div class="module1_5 box">
+                        <a href="{% url 'courses:course_detail' item.id %}">
+                            <img width="214" height="190" class="scrollLoading"
+                                 src="{{ MEDIA_URL }}{{ item.images }}" alt=""/>
+                        </a>
+                        <div class="des">
+                            <a href="{% url 'courses:course_detail' item.id %}"><h2>{{ item.name }}</h2></a>
+                            <span class="fl">课时：<i class="key">{{ item.study_times }}</i></span>
+                            <span class="fr">学习人数：{{ item.students_num }}</span>
+                        </div>
+                        <div class="bottom">
+                            <span class="fl">{{ item.organization.name }}</span>
+                            <span class="delete-group fr jsDeleteFav_course" data-favid="{{ item.id }}"></span>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    {% endifequal %}
+{% endblock %}
+
+{% block end-js %}
+    <script>
+        $('.jsDeleteFav_course').on('click', function () {
+            var _this = $(this),
+                favid = _this.attr('data-favid');
+            $.ajax({
+                cache: false,
+                type: "POST",
+                url: "{% url 'operations:add_fav' %}",
+                data: {
+                    fav_type: 1,
+                    fav_id: favid,
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                },
+                async: true,
+                success: function () {
+                    Dml.fun.showTipsDialog({
+                        title: '取消收藏',
+                        h2: '取消收藏成功!',
+                    });
+                    Dml.fun.winReload();
+                }
+            });
+        });
+    </script>
+{% endblock %}

@@ -1,0 +1,12 @@
+.flex-videos {
+    display: flex;
+    align-content: center;
+    justify-content: center;
+    margin-top: 1em;
+}
+
+#playVideo {
+    border: black dashed 2px;
+    border-radius: 10px;
+    padding: 10px;
+}

@@ -1,0 +1,85 @@
+{% extends 'base-users.html' %}
+{% load static %}
+
+{% block title %}个人中心-我的消息{% endblock %}
+{% block crumb-nav %}
+    <ul class="crumbs">
+        <li><a href="{% url 'index' %}">首页</a>></li>
+        <li><a href="{% url 'users:user_info' %}">个人中心</a>></li>
+        <li>我的消息</li>
+    </ul>
+{% endblock %}
+
+{% block right_title %}我的消息{% endblock %}
+
+{% block right_tab %}
+    <div class="head">
+        <ul class="tab_header messagehead">
+            <li class="active"><a href="{% url 'users:my_messages' %}">个人消息</a></li>
+            <li>消息内容</li>
+        </ul>
+    </div>
+{% endblock %}
+{% block right_content %}
+    {% ifequal user_messages.object_list.count 0 %}
+        {{ block.super }}
+    {% else %}
+        <div class="messagelist">
+            {% for item in user_messages.object_list %}
+                <div class="messages" style="margin-bottom: 1.5em;">
+                    <div class="fr">
+                        <div class="top">
+                            <span class="fl time">
+                                {{ item.add_time|date:"Y-m-d" }}&nbsp;&nbsp;
+                                {% if item.is_read %}
+                                    <span class="hasread_msg">消息已读</span>
+                                {% else %}
+                                    <span class="unread_msg">消息未读</span>
+                                {% endif %}
+                            </span>
+                        </div>
+                        <a class="msg_title" href="{% url 'users:msg_content' item.id %}"
+                           style="font-size: 1.3em; font-weight: bold">{{ item.title }}</a>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% endifequal %}
+
+    <!-- 分页按钮 -->
+    <div class="pageturn">
+        <ul class="pagelist">
+            <!-- 上一页 -->
+            {% if user_courses.has_previous %}
+                <li class="long"><a
+                        href="?{{ user_courses.previous_page_number.querystring }}">上一页</a>
+                </li>
+            {% endif %}
+
+            <!-- 中间页码 -->
+            {% for page in user_courses.pages %}
+                {% if page %}
+                    {% ifequal page user_courses.number %}
+                        <!-- 显示当前页码样式 -->
+                        <li class="active"><a href="?{{ page.querystring }}">{{ page }}</a>
+                        </li>
+                    {% else %}
+                        <!-- 显示非当前页码样式 -->
+                        <li><a href="?{{ page.querystring }}" class="page">{{ page }}</a>
+                        </li>
+                    {% endifequal %}
+                {% else %}
+                    <!-- 省略页码样式 -->
+                    <li class="none"><a href="">...</a></li>
+                {% endif %}
+            {% endfor %}
+
+            <!-- 下一页 -->
+            {% if user_courses.has_next %}
+                <li class="long"><a
+                        href="?{{ user_courses.next_page_number.querystring }}">下一页</a>
+                </li>
+            {% endif %}
+        </ul>
+    </div>
+{% endblock %}

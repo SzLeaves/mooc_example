@@ -1,0 +1,182 @@
+{% extends 'base-content.html' %}
+{% load static %}
+
+{% block title %}{{ course.name }}-学习{% endblock %}
+
+{% block external %}
+    <link rel="stylesheet" href="{% static 'css/muke/base.css' %}">
+    <link rel="stylesheet" href="{% static 'css/muke/common-less.css' %}">
+    <link rel="stylesheet" href="{% static 'css/muke/course/learn-less.css' %}"/>
+    <link rel="stylesheet" href="{% static 'css/aui.css' %}"/>
+    <link rel="stylesheet" href="{% static 'css/mooc.css' %}"/>
+    <link rel="stylesheet" href="{% static 'css/muke/course/common-less.css' %}">
+    <style>
+        #jsSearchBtn {
+            height: 2.9em;
+        }
+
+        .headerwrap .top {
+            font-size: 10px;
+        }
+    </style>
+{% endblock %}
+
+{% block nav %}
+    <section>
+        <div class="wp">
+            <div class="crumbs">
+                <ul>
+                    <li><a href="{% url 'index' %}">首页</a>></li>
+                    <li><a href="{% url 'courses:list' %}">公开课程</a>></li>
+                    <li><a href="{% url 'courses:course_detail' course.id %}">课程详情</a>></li>
+                    <li>章节信息</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+{% endblock %}
+
+{% block main_content %}
+    <div id="main">
+        <div class="course-infos">
+            <div class="w pr" style="border-radius: 15px">
+                <div style="height: 15px" class="path">
+                </div>
+                <div class="hd">
+                    <h2 class="l" style="padding: 6px 15px; font-size: 1.5em">{{ course.name }}</h2>
+                </div>
+                <div class="statics clearfix">
+                    <div class="static-item ">
+                        <span class="meta-value"><strong>{{ course.get_difficulty_display }}</strong></span>
+                        <span class="meta">难度</span>
+                        <em></em>
+                    </div>
+                    <div class="static-item static-time">
+                        <span class="meta-value">{{ course.study_times }}</span>
+                        <span class="meta">时长</span>
+                        <em></em>
+                    </div>
+                    <div class="static-item">
+                        <span class="meta-value"><strong>{{ course.students_num }}</strong></span>
+                        <span class="meta">学习人数</span>
+                        <em></em>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="course-info-main clearfix w has-progress">
+
+            <div class="info-bar clearfix">
+                <div class="content-wrap clearfix">
+                    <div class="content">
+                        <div class="mod-tab-menu">
+                            <ul class="course-menu clearfix">
+                                <li><a class="ui-tabs-active active" id="learnOn"
+                                       href="course-video.html"><span>章节</span></a></li>
+                                <li><a id="commentOn" class="" href="{% url 'courses:course_comments' course.id %}">
+                                    <span>评论</span>
+                                </a></li>
+                            </ul>
+                        </div>
+                        <div id="notice" class="clearfix">
+                            <div class="l"><strong>课程公告:</strong> <a href="javascript:void(0)">
+                                Spring的文档以及相关的jar文件已上传
+                            </a>
+                            </div>
+                        </div>
+
+                        <div class="mod-chapters">
+                            <div class="chapter chapter-active">
+                                {% for lesson in chapters %}
+                                    <h3>
+                                        <strong><i class="state-expand"></i>{{ lesson.name }}</strong>
+                                    </h3>
+                                    <ul class="video">
+                                        {% for video in lesson.getLessonsVideo %}
+                                            <li>
+                                                <!-- 通过Lesson的外键Video取出id -->
+                                                <a target="_blank" href="{% url 'courses:course_play' video.id %}"
+                                                   class="J-media-item studyvideo">
+                                                    {{ video.name }}&nbsp;&nbsp;（{{ video.times }}分钟）
+                                                </a>
+                                            </li>
+                                        {% endfor %}
+                                    </ul>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="aside r">
+                        <div class="bd">
+
+                            <div class="box mb40">
+                                <h4>资料下载</h4>
+                                <ul class="downlist">
+                                    {% for rec in resource %}
+                                        <li>
+                                            <span><i class="aui-iconfont aui-icon-file"></i>{{ rec.name }}</span>
+                                            <a href="{{ MEDIA_URL }}{{ rec.path }}" class="downcode"
+                                               target="_blank" download="" data-id="274" title="">下载</a>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+
+                            <div class="box mb40">
+                                <h4>讲师提示</h4>
+                                <div class="teacher-info">
+                                    <a href="" target="_blank">
+                                        <img src="{{ MEDIA_URL }}{{ course.teachers.images }}" width='80'
+                                             height='80' alt=""/>
+                                    </a>
+                                    <span class="tit">
+                                        <a href="" target="_blank">
+                                            {{ course.teachers.name }}
+                                        </a>
+                                    </span>
+                                    <span class="job">{{ course.teachers.work_position }}</span>
+                                </div>
+                                <div class="course-info-tip">
+                                    <dl class="first">
+                                        <dt>课程须知</dt>
+                                        <dd class="autowrap">{{ course.notice }}</dd>
+                                    </dl>
+                                    <dl>
+                                        <dt>老师告诉你能学到什么？</dt>
+                                        <dd class="autowrap">{{ course.knowledge }}</dd>
+                                    </dl>
+                                </div>
+                            </div>
+
+                            <div class="cp-other-learned  js-comp-tabs">
+                                <div class="cp-header clearfix">
+                                    <h2 class="cp-tit l">该课的同学还学过</h2>
+                                </div>
+                                <div class="cp-body">
+                                    <div class="cp-tab-pannel js-comp-tab-pannel" data-pannel="course"
+                                         style="display: block">
+                                        <!-- img 200 x 112 -->
+                                        <ul class="other-list">
+                                            {% for item in relate_courses %}
+                                                <li class="curr">
+                                                    <a href="{% url 'courses:course_detail' item.id %}" target="_blank">
+                                                        <img src="{{ MEDIA_URL }}{{ item.images }}"
+                                                             alt="{{ item.name }}">
+                                                        <span class="name autowrap">{{ item.name }}</span>
+                                                    </a>
+                                                </li>
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+{% endblock %}

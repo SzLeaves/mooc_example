@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="zh">
+{% load static %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+    <!-- block模块可以被继承修改 -->
+    <title>{% block title %}标题{% endblock %}</title>
+    {% block css %}
+        <link rel="stylesheet" type="text/css" href="{% static 'css/reset.css' %}">
+        <link rel="stylesheet" type="text/css" href="{% static 'css/animate.css' %}">
+        <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+        <link rel="stylesheet" type="text/css" href="{% static 'js/plugins/queryCity/css/cityLayout.css' %}">
+        <link rel="stylesheet" type="text/css" href="{% static 'css/lq.datetimepick.css' %}"/>
+    {% endblock %}
+
+    {% block js %}
+        <script src="{% static 'js/jquery.min.js' %}"></script>
+        <script src="{% static 'js/jquery-migrate-1.2.1.min.js' %}"></script>
+        <script src="{% static 'js/selectUi.js' %}"></script>
+        <script src="{% static 'js/deco-common.js' %}"></script>
+        <script src="{% static 'js/unslider.js' %}"></script>
+        <script src="{% static 'js/index.js' %}"></script>
+        <script src="{% static 'js/plugins/laydate/laydate.js' %}"></script>
+        <script src="{% static 'js/plugins/layer/layer.js' %}"></script>
+        <script src="{% static 'js/plugins/queryCity/js/public.js' %}"></script>
+        <script src="{% static 'js/plugins/jquery.scrollLoading.js' %}"></script>
+        <script src="{% static 'js/validateDialog.js' %}"></script>
+        <script src="{% static 'js/plugins/jquery.upload.js' %}"></script>
+        <script src="{% static 'js/validate.js' %}"></script>
+    {% endblock %}
+
+    {% block external %}
+    {% endblock %}
+</head>
+
+<section class="headerwrap headerwrap2">
+    <header>
+        <div class="header2 header">
+            <!-- 顶部水平栏 -->
+            <div class="top">
+                <div class="wp">
+                    <div class="fl"><p>服务电话：<b>123456789</b></p></div>
+                    <!--登录后跳转-->
+                    {% if request.user.is_authenticated %}
+                        <div class="personal">
+                            <dl class="user fr">
+                                <dd>
+                                    {% if request.user.nickname == '' %}
+                                        {{ request.user.username }}
+                                    {% else %}
+                                        {{ request.user.nickname }}
+                                    {% endif %}
+                                    <img class="down fr" src="{% static 'images/top_down.png' %}" alt=""/>
+                                </dd>
+                                <dt><img width="20" height="20"
+                                         src="{{ MEDIA_URL }}{{ request.user.image }}" alt=""/>
+                                </dt>
+                            </dl>
+                            <div class="userdetail">
+                                <dl>
+                                    <dt><img width="80" height="80"
+                                             src="{{ MEDIA_URL }}{{ request.user.image }}" alt=""/>
+                                    </dt>
+                                    <dd>
+                                        <h2>
+                                            {% if request.user.nickname == '' %}
+                                                {{ request.user.username }}
+                                            {% else %}
+                                                {{ request.user.nickname }}
+                                            {% endif %}
+                                        </h2>
+                                        <p>{{ request.user.email }}</p>
+                                    </dd>
+                                </dl>
+                                <div class="btn">
+                                    <a class="personcenter fl" href="{% url 'users:user_info' %}">进入个人中心</a>
+                                    <a class="fr" href="{% url 'users:logout' %}">退出</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="fr" style="padding-right: 2em">
+                            <a style="color:white;" class="fr registerbtn" href={% url 'users:register' %}>注册</a>
+                        </div>
+
+                        <!-- 消息提示 -->
+                        <a href="{% url 'users:my_messages' %}">
+                            <div class="msg-num">&nbsp;消息数：<span
+                                    id="MsgNum">{{ request.user.getUnreadNum }}</span>
+                            </div>
+                        </a>
+                    {% else %}
+                        <a style="color:white" class="fr registerbtn" href={% url 'users:register' %}>注册</a>
+                        <a style="color:white" class="fr loginbtn" href="{% url 'users:login' %}">登录</a>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- 主标题 -->
+            <div class="middle">
+                <div class="wp">
+                    <a href="{% url 'index' %}"><img class="fl" src="{% static 'images/logo2.png' %}" alt=""/></a>
+                    <h1>
+                        {% if request.user.nickname == '' %}
+                            {{ request.user.username }}的慕学网
+                        {% else %}
+                            {{ request.user.nickname }}的慕学网
+                        {% endif %}
+                    </h1>
+                </div>
+            </div>
+        </div>
+    </header>
+</section>
+
+<!-- 面包屑导航 -->
+<section>
+    <div class="wp">
+        {% block crumb-nav %}
+            <ul class="crumbs">
+                <li><a href="">首页</a>></li>
+                <li><a href="">个人中心</a>></li>
+            </ul>
+        {% endblock %}
+    </div>
+</section>
+
+<!-- 主内容 -->
+<section>
+    <div class="wp list personal_list">
+        <!-- 左侧栏 -->
+        <div class="left">
+            <ul>
+                <li {% if request.path|slice:'12' == '/users/info/' %}class="active2"{% endif %}>
+                    <a href="{% url 'users:user_info' %}">个人资料</a>
+                </li>
+                <li {% if request.path|slice:'17' == '/users/mycourses/' %}class="active2"{% endif %}>
+                    <a href="{% url 'users:my_courses' %}">我的课程</a>
+                </li>
+                <li {% if request.path|slice:'13' == '/users/myfav/' %}class="active2"{% endif %}>
+                    <a href="{% url 'users:my_favourite' 'org' %}">我的收藏</a>
+                </li>
+                <li {% if request.path|slice:'16' == '/users/messages/' or  request.path|slice:'15' == '/users/content/' %}class="active2"
+                    style="border-left: 2px solid #717171" {% endif %}>
+                    <a href="{% url 'users:my_messages' %}">我的消息</a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- 右侧栏 -->
+        <div class="right">
+            <div class="personal_des ">
+                <div class="head" style="border:1px solid #eaeaea;">
+                    <h1>{% block right_title %}右标题{% endblock %}</h1>
+                </div>
+                {% block right_tab %}
+                {% endblock %}
+                <div class="inforcon">
+                    {# 右侧栏主要信息 #}
+                    {% block right_content %}
+                        <h1 style="text-align: center; padding: 3em 0">暂无数据</h1>
+                    {% endblock %}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- 侧边按钮 -->
+<section>
+    <ul class="sidebar">
+        <li class="totop"></li>
+    </ul>
+</section>
+
+{# 弹窗信息 #}
+{% block window %}
+    <div class="dialog" id="jsDialog">
+        <div class="successbox dialogbox" id="jsSuccessTips">
+            <h1>成功提交</h1>
+            <div class="close jsCloseDialog"><img src="{% static 'images/dig_close.png' %}" alt=""/></div>
+            <div class="cont">
+                <h2>您的需求提交成功！</h2>
+                <p></p>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+
+{% block end-js %}
+{% endblock %}

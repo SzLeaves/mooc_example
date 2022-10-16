@@ -1,0 +1,65 @@
+{% extends 'base-orgs.html' %}
+{% load static %}
+
+{% block title %}授课机构老师{% endblock %}
+
+{% block org_logo %}
+    <img class="fl" style="width: 112px;height: 103px"
+         src="{{ MEDIA_URL }}{{ course_orgs.images }}" alt=""/>
+{% endblock %}
+
+{% block h1 %}
+    <h1>
+        {{ course_orgs.name }}
+        <img src="{% static 'images/authentication.png' %}" alt=""/>
+        <img src="{% static 'images/gold.png' %}" alt=""/>
+    </h1>
+{% endblock %}
+
+{% block bread-nav %}
+    <li><a href="{% url 'index' %}">首页</a>></li>
+    <li><a href="{% url 'orgs:list' %}">课程机构</a>></li>
+    <li><a href="{% url 'orgs:teachers' org_id %}">机构教师</a></li>
+{% endblock %}
+
+{% block active_item %}
+    <li class=""><a href="{% url 'orgs:home' org_id %}">机构首页</a></li>
+    <li class=""><a href="{% url 'orgs:courses' org_id %}">机构课程</a></li>
+    <li class=""><a href="{% url 'orgs:desc' org_id %}">机构介绍</a></li>
+    <li class="active2"><a href="{% url 'orgs:teachers' org_id %}">机构讲师</a></li>
+{% endblock %}
+
+
+{% block content-teachers %}
+    <div class="right companycenter layout">
+        <div class="head">
+            <h1>机构教师</h1>
+        </div>
+        <div class="diarys">
+            {% for teacher in all_teachers %}
+                <div class="module5 share company-diary-box" style="padding:10px 0;">
+                    <div class="left">
+                        <img class="pic" src="{{ MEDIA_URL }}{{ teacher.images }}" alt=""/>
+                    </div>
+                    <div class="right">
+                        <div class="top">
+                            <div class="fl">
+                                <a href="{% url 'orgs:teachers_info' teacher.id %}">
+                                    <h1>{{ teacher.name }}
+                                        {% if teacher.is_approval %}
+                                            <span class="key picbig" style="margin-left: 10px">&nbsp;&nbsp;</span>
+                                        {% endif %}
+                                    </h1>
+                                </a>
+                                <span>工作年限：{{ teacher.work_years }}年</span><br>
+                                <span>就职机构：{{ teacher.work_company }}</span><br>
+                                <span>工作职位：{{ teacher.work_position }}</span><br>
+                                <span>教学特点：{{ teacher.specialty }}</span><br>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

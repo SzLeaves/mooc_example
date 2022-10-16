@@ -1,0 +1,23 @@
+{# 由于CSRF错误也会返回403，所以模板需要命名为403_csrf.html才能在该异常时正确显示 #}
+{% extends 'base-exception.html' %}
+{% load static %}
+{% block title %}没有访问权限{% endblock %}
+
+{% block main-content %}
+    <body class="bg403 errorpage">
+        <section>
+            <div class="wp">
+                <div class="cont">
+                    <div class="fl error_cut"><img src="{% static 'images/pic403.png' %}" alt=""/></div>
+                    <div class="fr error_cut">
+                        <img src="{% static 'images/word403.png' %}" alt=""/>
+                        <h1>没有访问权限！</h1>
+                        <br/><br/><br/><br/><br/><br/>
+                        <p>请求被拒！</p>
+                        <p>您可以尝试重新加载此页面</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </body>
+{% endblock %}

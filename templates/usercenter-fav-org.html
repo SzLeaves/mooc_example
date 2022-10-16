@@ -1,0 +1,78 @@
+{% extends 'base-users.html' %}
+{% load static %}
+
+{% block title %}个人中心-我的收藏{% endblock %}
+{% block crumb-nav %}
+    <ul class="crumbs">
+        <li><a href="{% url 'index' %}">首页</a>></li>
+        <li><a href="{% url 'users:user_info' %}">个人中心</a>></li>
+        <li>我的收藏</li>
+    </ul>
+{% endblock %}
+
+{% block right_title %}我的收藏{% endblock %}
+
+{% block right_tab %}
+    <div class="head">
+        <ul class="tab_header messagehead">
+            <li class="active"><a href="{% url 'users:my_favourite' 'org' %}">课程机构</a></li>
+            <li><a href="{% url 'users:my_favourite' 'teacher' %}">授课教师</a></li>
+            <li><a href="{% url 'users:my_favourite' 'courses' %}">公开课程</a></li>
+        </ul>
+    </div>
+{% endblock %}
+
+{% block right_content %}
+    {# 没有数据显示时调用父模板的显示内容 #}
+    {% ifequal my_orgs.count 0 %}
+        {{ block.super }}
+    {% else %}
+        {% for item in my_orgs %}
+            <div class="messages messagelist butler_list company company-fav-box">
+                <dl class="des fr">
+                    <dt>
+                        <a href="{% url 'orgs:home' item.id %}">
+                            <img width="160" height="90" src="{{ MEDIA_URL }}{{ item.images }}" alt=""/>
+                        </a>
+                    </dt>
+                    <dd>
+                        <h1><a href="{% url 'orgs:home' item.id %}">{{ item.name }}</a></h1>
+                        <div class="pic fl" style="width:auto;">
+                            <img src="{% static 'images/authentication.png' %}" alt=""/>
+                            <img src="{% static 'images/gold.png' %}" alt=""/>
+                        </div>
+                        <span class="c8 clear">{{ item.city.name }}</span>
+                    </dd>
+                    <div class="delete jsDeleteFav_org" data-favid="{{ item.id }}"></div>
+                </dl>
+            </div>
+        {% endfor %}
+    {% endifequal %}
+{% endblock %}
+
+{% block end-js %}
+    <script>
+        $('.jsDeleteFav_org').on('click', function () {
+            var _this = $(this),
+                favid = _this.attr('data-favid');
+            $.ajax({
+                cache: false,
+                type: "POST",
+                url: "{% url 'operations:add_fav' %}",
+                data: {
+                    fav_type: 2,
+                    fav_id: favid,
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                },
+                async: true,
+                success: function () {
+                    Dml.fun.showTipsDialog({
+                        title: '取消收藏',
+                        h2: '取消收藏成功!',
+                    });
+                    Dml.fun.winReload();
+                }
+            });
+        });
+    </script>
+{% endblock %}

@@ -1,0 +1,115 @@
+{% extends 'base-content.html' %}
+{% load static %}
+
+{% block title %}{{ course.name }}-学习{% endblock %}
+
+{% block external %}
+    <link rel="stylesheet" href="{% static 'css/muke/base.css' %}">
+    <link rel="stylesheet" href="{% static 'css/muke/videos.css' %}">
+    <link rel="stylesheet" href="{% static 'css/muke/common-less.css' %}">
+    <link rel="stylesheet" href="{% static 'css/muke/course/learn-less.css' %}"/>
+    <link rel="stylesheet" href="{% static 'css/aui.css' %}"/>
+    <link rel="stylesheet" href="{% static 'css/mooc.css' %}"/>
+    <link rel="stylesheet" href="{% static 'css/muke/course/common-less.css' %}">
+    <style>
+        #jsSearchBtn {
+            height: 2.9em;
+        }
+
+        .headerwrap .top {
+            font-size: 10px;
+        }
+    </style>
+{% endblock %}
+
+{% block nav %}
+    <section>
+        <div class="wp">
+            <div class="crumbs">
+                <ul>
+                    <li><a href="{% url 'index' %}">首页</a>></li>
+                    <li><a href="{% url 'courses:list' %}">公开课程</a>></li>
+                    <li><a href="{% url 'courses:course_detail' course.id %}">课程详情</a>></li>
+                    <li><a href="{% url 'courses:course_videos' course.id %}">章节信息</a>></li>
+                    <li>{{ video.name }}</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+{% endblock %}
+
+{% block main_content %}
+    <div id="main">
+        <!-- 视频控件 -->
+        <div class="flex-videos">
+            <video id="playVideo" width="900" height="480" controls="controls" autoplay="autoplay">
+                <source src="{{ video.url }}">
+                <p>您的浏览器不支持html5</p>
+            </video>
+        </div>
+
+        <div class="course-info-main clearfix w has-progress">
+
+            <div class="info-bar clearfix">
+                <div class="content-wrap clearfix">
+                    <div class="content">
+                        <div class="mod-tab-menu">
+                            <ul class="course-menu clearfix">
+                                <li><a class="ui-tabs-active active" id="learnOn"
+                                       href="course-video.html"><span>章节</span></a></li>
+                                <li><a id="commentOn" class="" href="{% url 'courses:course_comments' course.id %}">
+                                    <span>评论</span>
+                                </a></li>
+                            </ul>
+                        </div>
+                        <div id="notice" class="clearfix">
+                            <div class="l"><strong>课程公告:</strong> <a href="javascript:void(0)">
+                                Spring的文档以及相关的jar文件已上传
+                            </a>
+                            </div>
+                        </div>
+
+                        <div class="mod-chapters">
+                            <div class="chapter chapter-active">
+                                {% for lesson in chapters %}
+                                    <h3>
+                                        <strong><i class="state-expand"></i>{{ lesson.name }}</strong>
+                                    </h3>
+                                    <ul class="video">
+                                        {% for video in lesson.getLessonsVideo %}
+                                            <li>
+                                                <a href="{% url 'courses:course_play' video.id %}"
+                                                   class="J-media-item studyvideo">
+                                                    {{ video.name }}&nbsp;&nbsp;（{{ video.times }}分钟）
+                                                </a>
+                                            </li>
+                                        {% endfor %}
+                                    </ul>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="aside r">
+                        <div class="bd">
+
+                            <div class="box mb40">
+                                <h4>资料下载</h4>
+                                <ul class="downlist">
+                                    {% for rec in resource %}
+                                        <li>
+                                            <span><i class="aui-iconfont aui-icon-file"></i>{{ rec.name }}</span>
+                                            <a href="{{ MEDIA_URL }}{{ rec.path }}" class="downcode"
+                                               target="_blank" download="" data-id="274" title="">下载</a>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+{% endblock %}

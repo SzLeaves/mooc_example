@@ -1,0 +1,19 @@
+{% extends 'base-exception.html' %}
+{% load static %}
+{% block title %}找不到该页面{% endblock %}
+
+{% block main-content %}
+    <body class="bg404 errorpage">
+        <section>
+            <div class="wp">
+                <div class="cont">
+                    <img src="{% static 'images/pic404.png' %}" alt=""/>
+                    <br/><br/><br/><br/>
+                    <p>wow~这个页面被外星人抢走了~</p>
+                    <br/>
+                    <span>Wow~ this page was the alien took ~</span>
+                </div>
+            </div>
+        </section>
+    </body>
+{% endblock %}

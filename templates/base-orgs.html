@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="zh">
+{% load static %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+    <title>{% block title %}标题{% endblock %}</title>
+    {% block css %}
+        <link rel="stylesheet" href="{% static 'css/reset.css' %}">
+        <link rel="stylesheet" href="{% static 'css/animate.css' %}">
+        <link rel="stylesheet" href="{% static 'css/style.css' %}">
+        <link rel="stylesheet" href="{% static 'js/plugins/queryCity/css/cityLayout.css' %}">
+    {% endblock %}
+
+    {% block js %}
+        <script src="{% static 'js/jquery.min.js' %}"></script>
+        <script src="{% static 'js/jquery-migrate-1.2.1.min.js' %}"></script>
+        <script src="{% static 'js/selectUi.js' %}"></script>
+        <script src="{% static 'js/deco-common.js' %}"></script>
+        <script src="{% static 'js/unslider.js' %}"></script>
+        <script src="{% static 'js/index.js' %}"></script>
+        <script src="{% static 'js/plugins/laydate/laydate.js' %}"></script>
+        <script src="{% static 'js/plugins/layer/layer.js' %}"></script>
+        <script src="{% static 'js/plugins/queryCity/js/public.js' %}"></script>
+        <script src="{% static 'js/plugins/jquery.scrollLoading.js' %}"></script>
+    {% endblock %}
+</head>
+<body>
+    <!-- header介绍 -->
+    <section class="headerwrap headerwrap2">
+        <header id="top">
+            <div class="header2 header">
+                <!-- 顶部水平栏 -->
+                <div class="top">
+                    <div class="wp">
+                        <div class="fl"><p>服务电话：<b>123456789</b></p></div>
+                        <!--登录后跳转-->
+                        {% if request.user.is_authenticated %}
+                            <div class="personal">
+                                <dl class="user fr">
+                                    <dd>
+                                        {% if request.user.nickname == '' %}
+                                            {{ request.user.username }}
+                                        {% else %}
+                                            {{ request.user.nickname }}
+                                        {% endif %}
+                                        <img class="down fr" src="{% static 'images/top_down.png' %}" alt=""/>
+                                    </dd>
+                                    <dt><img width="20" height="20"
+                                             src="{{ MEDIA_URL }}{{ request.user.image }}" alt=""/>
+                                    </dt>
+                                </dl>
+                                <div class="userdetail">
+                                    <dl>
+                                        <dt><img width="80" height="80"
+                                                 src="{{ MEDIA_URL }}{{ request.user.image }}" alt=""/>
+                                        </dt>
+                                        <dd>
+                                            <h2>
+                                                {% if request.user.nickname == '' %}
+                                                    {{ request.user.username }}
+                                                {% else %}
+                                                    {{ request.user.nickname }}
+                                                {% endif %}
+                                            </h2>
+                                            <p>{{ request.user.email }}</p>
+                                        </dd>
+                                    </dl>
+                                    <div class="btn">
+                                        <a class="personcenter fl" href="{% url 'users:user_info' %}">进入个人中心</a>
+                                        <a class="fr" href="{% url 'users:logout' %}">退出</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="fr" style="padding-right: 2em">
+                                <a style="color:white;" class="fr registerbtn" href={% url 'users:register' %}>注册</a>
+                            </div>
+
+                            <!-- 消息提示 -->
+                            <a href="{% url 'users:my_messages' %}">
+                                <div class="msg-num">&nbsp;消息数：<span
+                                        id="MsgNum">{{ request.user.getUnreadNum }}</span>
+                                </div>
+                            </a>
+                        {% else %}
+                            <a style="color:white" class="fr registerbtn" href={% url 'users:register' %}>注册</a>
+                            <a style="color:white" class="fr loginbtn" href="{% url 'users:login' %}">登录</a>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="middle companyheader" style="margin-top: 1em">
+                    <div class="wp">
+                        <!-- 主logo -->
+                        {% block org_logo %}
+                            <img class="fl" style="width: 112px; height: 103px" src="" alt=""/>
+                        {% endblock %}
+                        <div class="head fl">
+                            <!-- 主标题 -->
+                            {% block h1 %}
+                                主标题
+                                <h1>
+                                    <img src="{% static 'images/authentication.png' %}" alt=""/>
+                                    <img src="{% static 'images/gold.png' %}" alt=""/>
+                                </h1>
+                            {% endblock %}
+                            <p class="fl">
+                                <span class="fl" style="margin-top:8px;color:#848484;">推荐指数： </span>
+                                <span class="precision company-credit" data-star-scope="5.0"></span>
+                                <span class="key">5.0</span>
+                            </p>
+                        </div>
+                        <div id="jsFavBtn" class="btn fr collectionbtn notlogin">
+                            {% if has_fav %}已收藏{% else %}收藏{% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+    </section>
+
+    <!-- 面包屑导航 -->
+    <section>
+        <div class="wp">
+            <ul class="crumbs">
+                {% block bread-nav %}
+                    <li><a href="{% url 'index' %}">首页</a>></li>
+                    <li><a href="{% url 'orgs:list' %}">课程机构</a>></li>
+                    <li><a href="">机构首页</a></li>
+                {% endblock %}
+            </ul>
+        </div>
+    </section>
+
+    <section>
+        <div class="wp list personal_list comp">
+            <!-- 左侧栏 -->
+            <div class="left">
+                <ul>
+                    {% block active_item %}
+                        <li class=""><a href="">机构首页</a></li>
+                        <li class=""><a href="">机构课程</a></li>
+                        <li class=""><a href="">机构介绍</a></li>
+                        <li class=""><a href="">机构讲师</a></li>
+                    {% endblock %}
+                </ul>
+            </div>
+
+            <!-- 全部课程 -->
+            {% block content-courses %}
+
+            {% endblock %}
+
+            <!-- 机构教师 -->
+            {% block content-teachers %}
+
+            {% endblock %}
+
+            <!-- 机构介绍 -->
+            {% block content-intro %}
+
+            {% endblock %}
+        </div>
+    </section>
+
+    <!-- 侧边按钮 -->
+    <section>
+        <ul class="sidebar">
+            <li class="totop"><a href="#top"></a></li>
+        </ul>
+    </section>
+
+    {% block external_js %}
+        <script>
+            $(function () {
+                $('#jsFavBtn').on('click', function () {
+                    $.ajax({
+                        cache: false,
+                        type: "POST",
+                        url: "{% url 'operations:add_fav' %}",
+                        dataType: "json",
+                        data: {'fav_id': '{{ course_orgs.id }}', 'fav_type': 2},
+                        async: true,
+                        beforeSend: function (xhr) {
+                            xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
+                        },
+                        success: function (data) {
+                            if (data.status === 'fail') {
+                                if (data.msg === '用户未登录') {
+                                    window.location.href = "{% url 'users:login' %}";
+                                } else {
+                                    console.log(data.msg)
+                                }
+
+                            } else if (data.status === 'success') {
+                                $('#jsFavBtn').text(data.msg)
+                            }
+                        },
+                        error: function () {
+                            console.log('error')
+                        },
+                    });
+                });
+            })
+        </script>
+    {% endblock %}
+</body>
+</html>

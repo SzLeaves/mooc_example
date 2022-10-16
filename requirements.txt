@@ -1,0 +1,8 @@
+Django==3.2.15
+pymysql
+django-simple-captcha
+django-import-export
+mysqlclient
+django-simpleui
+django-pure-pagination
+uwsgi

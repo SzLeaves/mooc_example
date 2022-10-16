@@ -1,0 +1,42 @@
+{% extends 'base-userapp.html' %}
+{% load static %}
+{% block title %}用户重置密码{% endblock %}
+
+{% block active_item %}
+    <li><a href="{% url "users:login" %}">[登录]</a></li>
+    <li><a href="{% url "users:register" %}">[注册]</a></li>
+{% endblock %}
+
+{% block main_title %}
+    <h1>重置密码</h1>
+{% endblock %}
+
+{% block img-slide %}
+    <div class="imgslide">
+        <ul class="imgs">
+            <li><a href=""><img width="483" height="472" src="{% static 'images/57a801860001c34b12000460.jpg' %}" alt=""/></a></li>
+            <li><a href=""><img width="483" height="472" src="{% static 'images/57a801860001c34b12000460.jpg' %}" alt=""/></a></li>
+            <li><a href=""><img width="483" height="472" src="{% static 'images/57a801860001c34b12000460.jpg' %}" alt=""/></a></li>
+        </ul>
+    </div>
+{% endblock %}
+
+{% block main_content %}
+    <h2>重置密码</h2>
+    <form id="jsFindPwdForm" method="post" action="{% url 'users:reset_password' verify_code %}" autocomplete="off">
+        <div class="form-group marb8 {% if resetpwd_form.errors.password_1 %}errorput{% endif %}">
+            <input type="password" name="password_1" id="jsResetPwd" placeholder="请输入新密码"/>
+        </div>
+        <div class="form-group marb8 {% if resetpwd_form.errors.password_2 %}errorput{% endif %}">
+            <input type="password" name="password_2" id="jsResetPwd2" placeholder="请再次输入新密码"/>
+        </div>
+
+        <div class="error btns" id="jsForgetTips">
+            {% for key, error in resetpwd_form.errors.items %}{{ error }}{% endfor %}{{ err_msg }}
+        </div>
+
+        <input type="hidden" name="sms_type" value="1">
+        <input class="btn btn-green" id="jsFindPwdBtn" type="submit" value="提交"/>
+        {% csrf_token %}
+    </form>
+{% endblock %}

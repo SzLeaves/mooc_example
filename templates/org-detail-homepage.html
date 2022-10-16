@@ -1,0 +1,105 @@
+{% extends 'base-orgs.html' %}
+{% load static %}
+
+{% block title %}授课机构主页{% endblock %}
+
+{% block org_logo %}
+    <img class="fl" style="width: 112px;height: 103px"
+         src="{{ MEDIA_URL }}{{ course_orgs.images }}" alt=""/>
+{% endblock %}
+
+{% block h1 %}
+    <h1>
+        {{ course_orgs.name }}
+        <img src="{% static 'images/authentication.png' %}" alt=""/>
+        <img src="{% static 'images/gold.png' %}" alt=""/>
+    </h1>
+{% endblock %}
+
+{% block bread-nav %}
+    <li><a href="{% url 'index' %}">首页</a>></li>
+    <li><a href="{% url 'orgs:list' %}">课程机构</a>></li>
+    <li><a href="{% url 'orgs:home' org_id %}">机构首页</a></li>
+{% endblock %}
+
+{% block active_item %}
+        <li class="active2"><a href="{% url 'orgs:home' org_id %}">机构首页</a></li>
+        <li class=""><a href="{% url 'orgs:courses' org_id %}">机构课程</a></li>
+        <li class=""><a href="{% url 'orgs:desc' org_id %}">机构介绍</a></li>
+        <li class=""><a href="{% url 'orgs:teachers' org_id %}">机构讲师</a></li>
+{% endblock %}
+
+{% block content-courses %}
+    <div class="right companycenter layout grouping">
+        <div class="head">
+            <h1>全部课程</h1>
+            <a class="green fr more" href="{% url 'orgs:courses' org_id %}">查看更多 > </a>
+        </div>
+        <div class="brief group_list">
+            {% for course in all_courses %}
+                <div class="module1_5 box">
+                    <a href="{% url 'courses:course_detail' course.id %}">
+                        <img width="214" src="{{ MEDIA_URL }}{{ course.images }}" alt=""/>
+                    </a>
+                    <div class="des">
+                        <a href="{% url 'courses:course_detail' course.id %}"><h2>{{ course.name }}</h2></a>
+                        <span class="fl">课时：<i class="key">{{ course.study_times }}</i></span>
+                        <span class="fr">参加人数：{{ course.students_num }}</span>
+                    </div>
+                    <div class="bottom">
+                        <span class="fl">{{ course.organization.name }}</span>
+                        <span class="star fr notlogin" data-favid="13"
+                              data-fav-type="4">{{ course.favourite_num }}</span>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}
+
+{% block content-teachers %}
+    <div class="right companycenter layout">
+        <div class="head">
+            <h1>机构教师</h1>
+            <a class="green fr more" href="{% url 'orgs:teachers' org_id %}">查看更多 > </a>
+        </div>
+        <div class="diarys">
+            {% for teacher in all_teachers %}
+                <div class="module5 share company-diary-box" style="padding:10px 0;">
+                    <div class="left">
+                        <img class="pic" src="{{ MEDIA_URL }}{{ teacher.images }}" alt=""/>
+                    </div>
+                    <div class="right">
+                        <div class="top">
+                            <div class="fl">
+                                <a href="{% url 'orgs:teachers_info' teacher.id %}">
+                                    <h1>{{ teacher.name }}
+                                        {% if teacher.is_approval %}
+                                            <span class="key picbig" style="margin-left: 10px">&nbsp;&nbsp;</span>
+                                        {% endif %}
+                                    </h1>
+                                </a>
+                                <span>工作年限：{{ teacher.work_years }}年</span><br>
+                                <span>就职机构：{{ teacher.work_company }}</span><br>
+                                <span>工作职位：{{ teacher.work_position }}</span><br>
+                                <span>教学特点：{{ teacher.specialty }}</span><br>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}
+
+{% block content-intro %}
+    <div class="right companycenter layout">
+        <div class="head">
+            <h1>机构介绍</h1>
+            <a class="green fr more" href="{% url 'orgs:desc' org_id %}">查看更多 > </a>
+        </div>
+        <div class="cont">
+            {{ course_orgs.describe }}
+        </div>
+    </div>
+{% endblock %}

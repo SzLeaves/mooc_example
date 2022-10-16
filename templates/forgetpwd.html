@@ -1,0 +1,45 @@
+{% extends 'base-userapp.html' %}
+{% load static %}
+{% block title %}用户注册{% endblock %}
+
+{% block active_item %}
+    <li><a href="{% url "users:login" %}">[登录]</a></li>
+    <li><a href="{% url "users:register" %}">[注册]</a></li>
+{% endblock %}
+
+{% block main_title %}
+    <h1>找回密码</h1>
+{% endblock %}
+
+{% block img-slide %}
+    <div class="imgslide">
+        <ul class="imgs">
+            <li><a href=""><img width="483" height="472" src="{% static 'images/57a801860001c34b12000460.jpg' %}" alt=""/></a></li>
+            <li><a href=""><img width="483" height="472" src="{% static 'images/57a801860001c34b12000460.jpg' %}" alt=""/></a></li>
+            <li><a href=""><img width="483" height="472" src="{% static 'images/57a801860001c34b12000460.jpg' %}" alt=""/></a></li>
+        </ul>
+    </div>
+{% endblock %}
+
+{% block main_content %}
+    <h2>忘记密码</h2>
+    <form id="jsFindPwdForm" method="post" action="{% url "users:find_password" %}" autocomplete="off">
+        <div class="form-group marb20 {% if register_form.errors.email %}errorput{% endif %}">
+            <label>帐&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;号</label>
+            <input type="text" id="account" name="email"
+                   value="{% if forgerpwd_form.email.value == None %}{% else %}{{ forgerpwd_form.email.value }}{% endif %}"
+                   placeholder="邮箱"/>
+        </div>
+        <div class="form-group captcha1 marb38 {% if register_form.errors.email %}errorput{% endif %}">
+            <label>验&nbsp;证&nbsp;码</label>
+            {{ forgerpwd_form.captcha }}
+        </div>
+        <div class="error btns" id="jsForgetTips">
+            {% for key, error in forgerpwd_form.errors.items %}{{ error }}{% endfor %}{{ err_msg }}
+        </div>
+        <input type="hidden" name="sms_type" value="1">
+        <input class="btn btn-green" id="jsFindPwdBtn" type="submit" value="提交"/>
+        <p class="form-p" style="bottom:5em;">您还可以<a href="{% url "users:login" %}"> [直接登录]</a></p>
+        {% csrf_token %}
+    </form>
+{% endblock %}

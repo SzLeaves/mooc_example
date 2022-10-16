@@ -1,0 +1,20 @@
+{% extends 'base-exception.html' %}
+{% load static %}
+{% block title %}服务器错误{% endblock %}
+
+{% block main-content %}
+    <body class="bg503 errorpage">
+        <section>
+            <div class="wp">
+                <div class="cont">
+                    <div class="fl error_cut"><img src="{% static 'images/pic503.png' %}" alt=""/></div>
+                    <div class="fr error_cut">
+                        <img src="{% static 'images/word503.png' %}" alt=""/>
+                        <br/><br/><br/><br/><br/><br/>
+                        <p>服务器错误，请稍后重新刷新。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </body>
+{% endblock %}

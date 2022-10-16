@@ -1,0 +1,131 @@
+{% extends 'base-content.html' %}
+
+{% load static %}
+{% block title %}慕学在线公开课{% endblock %}
+
+{% block nav %}
+    <section>
+        <div class="wp">
+            <ul class="crumbs">
+                <li><a href="{% url 'index' %}">首页></a></li>
+                <li><a href="{% url 'courses:list' %}">公开课</a></li>
+            </ul>
+        </div>
+    </section>
+{% endblock %}
+
+{% block main_content %}
+    <section>
+        <div class="wp">
+            <div class="list" style="margin-top:0;">
+                <!-- 左侧课程展示 -->
+                <div class="left layout">
+                    <!-- 排序 -->
+                    <div class="head">
+                        <ul class="tab_header">
+                            <li {% ifequal sort 'new' %}class="active"{% endifequal %}><a href="?sort=new">最新 </a>
+                            </li>
+                            <li {% ifequal sort 'hot' %}class="active"{% endifequal %}><a href="?sort=hot">最热门</a>
+                            </li>
+                            <li {% ifequal sort 'students' %}class="active"{% endifequal %}><a href="?sort=students">参与人数</a>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="left layout">
+                        <div id="inWindow">
+                            <div class="tab_cont " id="content">
+                                <div class="group_list">
+                                    <!-- block start -->
+                                    {% for course in all_courses.object_list %}
+                                        <div class="box">
+                                            <a href="{% url 'courses:course_detail' course.id %}">
+                                                <img width="280" height="350" class="scrollLoading"
+                                                     src="{{ MEDIA_URL }}{{ course.images }}" alt=""/>
+                                            </a>
+                                            <div class="des">
+                                                <a href="{% url 'courses:course_detail' course.id %}">
+                                                    <h2>{{ course.name }}</h2>
+                                                </a>
+                                                <span class="fl">时长：<i class="key">{{ course.study_times }}</i></span>
+                                                <span class="fr">学习人数：{{ course.students_num }}&nbsp;&nbsp;</span>
+                                            </div>
+                                            <div class="bottom">
+                                                <a href="{% url 'courses:course_detail' course.id %}"><span
+                                                        class="fl">来自 {{ course.organization.name }}</span></a>
+                                                <span class="star fr  notlogin"
+                                                      data-favid="15">{{ course.favourite_num }}</span>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                    <!-- block end -->
+                                </div>
+
+                                <!-- 分页按钮 -->
+                                <div class="pageturn">
+                                    <ul class="pagelist">
+                                        <!-- 上一页 -->
+                                        {% if all_courses.has_previous %}
+                                            <li class="long"><a href="?{{ all_orgs.previous_page_number.querystring }}">上一页</a>
+                                            </li>
+                                        {% endif %}
+
+                                        <!-- 中间页码 -->
+                                        {% for page in all_courses.pages %}
+                                            {% if page %}
+                                                {% ifequal page all_courses.number %}
+                                                    <!-- 显示当前页码样式 -->
+                                                    <li class="active"><a href="?{{ page.querystring }}">{{ page }}</a>
+                                                    </li>
+                                                {% else %}
+                                                    <!-- 显示非当前页码样式 -->
+                                                    <li><a href="?{{ page.querystring }}" class="page">{{ page }}</a>
+                                                    </li>
+                                                {% endifequal %}
+                                            {% else %}
+                                                <!-- 省略页码样式 -->
+                                                <li class="none"><a href="">...</a></li>
+                                            {% endif %}
+                                        {% endfor %}
+
+                                        <!-- 下一页 -->
+                                        {% if all_courses.has_next %}
+                                            <li class="long"><a href="?{{ all_courses.next_page_number.querystring }}">下一页</a>
+                                            </li>
+                                        {% endif %}
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <!-- 右侧课程展示 -->
+                <div class="right layout">
+                    <div class="head">热门课程推荐</div>
+                    <div class="group_recommend">
+                        <!-- block start -->
+                        {% for hot_item in hot_courses %}
+                            <dl>
+                                <dt>
+                                    <a target="_blank" href="">
+                                        <img width="240" height="220" class="scrollLoading"
+                                             src="{{ MEDIA_URL }}{{ hot_item.images }}"
+                                             alt=""/>
+                                    </a>
+                                </dt>
+                                <dd>
+                                    <a target="_blank" href=""><h2>{{ hot_item.name }}</h2></a>
+                                    <!-- 读取model带choices的读取方法: object.get_[字段变量名]_display -->
+                                    <span class="fl">难度：<i
+                                            class="key">{{ hot_item.get_difficulty_display }}</i></span>
+                                </dd>
+                            </dl>
+                        {% endfor %}
+                        <!-- block end -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

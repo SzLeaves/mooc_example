@@ -1,0 +1,38 @@
+{% extends 'base-users.html' %}
+{% load static %}
+
+{% block title %}个人中心-我的消息{% endblock %}
+{% block crumb-nav %}
+    <ul class="crumbs">
+        <li><a href="{% url 'index' %}">首页</a>></li>
+        <li><a href="{% url 'users:user_info' %}">个人中心</a>></li>
+        <li>我的消息</li>
+    </ul>
+{% endblock %}
+
+{% block right_title %}我的消息{% endblock %}
+
+{% block right_tab %}
+    <div class="head">
+        <ul class="tab_header messagehead">
+            <li><a href="{% url 'users:my_messages' %}">个人消息</a></li>
+            <li class="active">消息内容</li>
+        </ul>
+    </div>
+{% endblock %}
+
+{% block right_content %}
+    <div class="messagelist" style="border: none">
+        <div class="messages" style="margin-bottom: 1.5em;">
+            <div class="fr">
+                <div class="top">
+                    <span class="fl time">{{ message.add_time|date:"Y-m-d" }}</span>
+                </div>
+                <p class="msg_title" style="font-size: 1.3em; font-weight: bold">{{ message.title }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="msg_content">
+        <p>{{ message.content }}</p>
+    </div>
+{% endblock %}

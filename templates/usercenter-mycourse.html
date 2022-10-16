@@ -1,0 +1,142 @@
+{% extends 'base-users.html' %}
+{% load static %}
+
+{% block title %}个人中心-我的课程{% endblock %}
+{% block crumb-nav %}
+    <ul class="crumbs">
+        <li><a href="{% url 'index' %}">首页</a>></li>
+        <li><a href="{% url 'users:user_info' %}">个人中心</a>></li>
+        <li>我的课程</li>
+    </ul>
+{% endblock %}
+
+{% block right_title %}我的课程{% endblock %}
+{% block right_content %}
+    {# 没有数据显示时调用父模板的显示内容 #}
+    {% ifequal user_courses.object_list.count 0 %}
+        {{ block.super }}
+    {% else %}
+        <div class="companycenter" style="width: 110%">
+            <div class="group_list brief">
+                {% for item in user_courses.object_list %}
+                    <div class="module1_5 box">
+                        <a href="{% url 'courses:course_detail' item.course.id %}">
+                            <img width="214" height="190" class="scrollLoading"
+                                 src="{{ MEDIA_URL }}{{ item.course.images }}" alt=""/>
+                        </a>
+                        <div class="des">
+                            <a href="{% url 'courses:course_detail' item.course.id %}"><h2>{{ item.course.name }}</h2>
+                            </a>
+                            <span class="fl">课时：<i class="key">{{ item.course.study_times }}</i></span>
+                            <span class="fr">学习人数：{{ item.course.students_num }}</span>
+                        </div>
+                        <div class="bottom">
+                            <span class="fl">{{ item.course.organization.name }}</span>
+                            <span class="delete-group fr jsDelete_study" data-course-id="{{ item.course.id }}"></span>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <!-- 分页按钮 -->
+            <div class="pageturn">
+                <ul class="pagelist">
+                    <!-- 上一页 -->
+                    {% if user_courses.has_previous %}
+                        <li class="long"><a
+                                href="?{{ user_courses.previous_page_number.querystring }}">上一页</a>
+                        </li>
+                    {% endif %}
+
+                    <!-- 中间页码 -->
+                    {% for page in user_courses.pages %}
+                        {% if page %}
+                            {% ifequal page user_courses.number %}
+                                <!-- 显示当前页码样式 -->
+                                <li class="active"><a href="?{{ page.querystring }}">{{ page }}</a>
+                                </li>
+                            {% else %}
+                                <!-- 显示非当前页码样式 -->
+                                <li><a href="?{{ page.querystring }}" class="page">{{ page }}</a>
+                                </li>
+                            {% endifequal %}
+                        {% else %}
+                            <!-- 省略页码样式 -->
+                            <li class="none"><a href="">...</a></li>
+                        {% endif %}
+                    {% endfor %}
+
+                    <!-- 下一页 -->
+                    {% if user_courses.has_next %}
+                        <li class="long"><a
+                                href="?{{ user_courses.next_page_number.querystring }}">下一页</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    {% endifequal %}
+{% endblock %}
+
+{% block window %}
+    <div class="dialog" id="jsDialog">
+        <div class="successbox dialogbox" id="jsSuccessTips">
+            <h1>成功提交</h1>
+            <div class="close jsCloseDialog"><img src="{% static 'images/dig_close.png' %}"/></div>
+            <div class="cont">
+                <h2>您的需求提交成功！</h2>
+                <p></p>
+            </div>
+        </div>
+
+        <!--提示弹出框-->
+        <div class="bidtips dialogbox promptbox" id="jsComfirmDialig">
+            <h1>确认提交</h1>
+            <div class="close jsCloseDialog"><img src="{% static 'images/dig_close.png' %}" alt=""/></div>
+            <div class="cont">
+                <h2>您确认提交吗？</h2>
+                <dd class="autoTxtCount">
+                    <div class="button">
+                        <input type="button" class="fl half-btn" value="确定" id="jsComfirmBtn"/>
+                        <span class="fr half-btn jsCloseDialog">取消</span>
+                    </div>
+                </dd>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block end-js %}
+    <script>
+        var del_course_id = null;
+        // 取消学习课程
+        $('.jsDelete_study').on('click', function () {
+            var _this = $(this)
+            del_course_id = _this.attr('data-course-id');
+            Dml.fun.showComfirmDialog({
+                h1: '取消课程',
+                h2: '您确认取消学习该课程吗？',
+            });
+        });
+        $('#jsComfirmBtn').click(function () {
+                $.ajax({
+                    cache: false,
+                    type: "POST",
+                    url: "{% url 'users:my_courses' %}",
+                    data: {
+                        course_id: del_course_id,
+                        csrfmiddlewaretoken: '{{ csrf_token }}'
+                    },
+                    async: true,
+                    success: function () {
+                        Dml.fun.showTipsDialog({
+                            title: '取消课程',
+                            h2: '取消学习该课程成功！',
+                        });
+                        Dml.fun.winReload();
+                    }
+                })
+            }
+        );
+    </script>
+{% endblock %}

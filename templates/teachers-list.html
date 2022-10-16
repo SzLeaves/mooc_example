@@ -1,0 +1,124 @@
+{% extends 'base-content.html' %}
+
+{% load static %}
+{% block title %}慕学在线-授课教师{% endblock %}
+
+{% block nav %}
+    <section>
+        <div class="wp">
+            <ul class="crumbs">
+                <li><a href="{% url 'index' %}">首页</a>></li>
+                <li><a href="{% url 'orgs:list_teachers' %}">课程讲师</a></li>
+            </ul>
+        </div>
+    </section>
+{% endblock %}
+
+{% block main_content %}
+    <section>
+        <div class="wp butler_list_box list">
+            <div class='left'>
+                <div class="butler_list layout">
+                    <div class="head">
+                        <ul class="fl tab_header">
+                            <li {% ifequal sort '' %}class="active"{% endifequal %}>
+                                <a href="?sort">全部</a>
+                            </li>
+                            <li {% ifequal sort 'hot' %}class="active"{% endifequal %}>
+                                <a href="?sort=hot">人气 &#8595;</a>
+                            </li>
+                        </ul>
+                        <div class="fr butler-num">
+                            共<span class="key">{{ teachers_num }}</span>人&nbsp;&nbsp;&nbsp;
+                        </div>
+                    </div>
+
+                    {% for item in teachers.object_list %}
+                        <dl class="des">
+                            <dt>
+                                <a href="{% url 'orgs:teachers_info' item.id %}">
+                                    <div class="picpic">
+                                        <img width="100" height="100" class="scrollLoading"
+                                             src="{{ MEDIA_URL }}{{ item.images }}" alt=""/>
+                                    </div>
+                                </a>
+
+                            </dt>
+                            <dd>
+                                <h1><a href="{% url 'orgs:teachers_info' item.id %}">{{ item.name }}</a>
+                                    {% if item.is_approval %}
+                                        <span class="key picbig">金牌讲师</span>
+                                    {% endif %}
+                                </h1>
+                                <ul class="cont">
+                                    <li>工作年限：<span>{{ item.work_years }}</span></li>
+                                    <li>工作职位：<span>{{ item.work_position }}</span></li>
+                                    <li>就职公司：<span>{{ item.work_company }}&nbsp;</span></li>
+                                    <li>教学特点：<span>{{ item.specialty }}</span></li>
+                                </ul>
+                                <a class="buy buyservice" href="{% url 'orgs:teachers_info' item.id %}">
+                                    <br/>查看<br/>详情
+                                </a>
+                            </dd>
+                        </dl>
+                    {% endfor %}
+
+                </div>
+
+                <!-- 分页按钮 -->
+                <div class="pageturn">
+                    <ul class="pagelist">
+                        <!-- 上一页 -->
+                        {% if teachers.has_previous %}
+                            <li class="long"><a href="?{{ teachers.previous_page_number.querystring }}">上一页</a>
+                            </li>
+                        {% endif %}
+
+                        <!-- 中间页码 -->
+                        {% for page in teachers.pages %}
+                            {% if page %}
+                                {% ifequal page teachers.number %}
+                                    <!-- 显示当前页码样式 -->
+                                    <li class="active"><a href="?{{ page.querystring }}">{{ page }}</a>
+                                    </li>
+                                {% else %}
+                                    <!-- 显示非当前页码样式 -->
+                                    <li><a href="?{{ page.querystring }}" class="page">{{ page }}</a>
+                                    </li>
+                                {% endifequal %}
+                            {% else %}
+                                <!-- 省略页码样式 -->
+                                <li class="none"><a href="">...</a></li>
+                            {% endif %}
+                        {% endfor %}
+
+                        <!-- 下一页 -->
+                        {% if teachers.has_next %}
+                            <li class="long"><a href="?{{ teachers.next_page_number.querystring }}">下一页</a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+
+            <div class="right layout">
+                <div class="head">讲师排行榜</div>
+                {% for hot in hot_teachers %}
+                    <dl class="des">
+                        <span class="num fl">{{ forloop.counter }}</span>
+                        <a href="{% url 'orgs:teachers_info' hot.id %}">
+                            <dt>
+                                <img width="50" height="50" class="scrollLoading"
+                                     src="{{ MEDIA_URL }}{{ hot.images }}" alt=""/>
+                            </dt>
+                        </a>
+                        <dd>
+                            <h1 title="{{ hot.name }}"><a href="{% url 'orgs:teachers_info' hot.id %}">{{ hot.name }}</a></h1>
+                            <p>工作年限：<span>{{ hot.work_years }}</span></p>
+                        </dd>
+                    </dl>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+{% endblock %}

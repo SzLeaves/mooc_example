@@ -1,0 +1,91 @@
+{% extends 'base-users.html' %}
+{% load static %}
+
+{% block title %}个人中心-我的收藏{% endblock %}
+{% block crumb-nav %}
+    <ul class="crumbs">
+        <li><a href="{% url 'index' %}">首页</a>></li>
+        <li><a href="{% url 'users:user_info' %}">个人中心</a>></li>
+        <li>我的收藏</li>
+    </ul>
+{% endblock %}
+
+{% block right_title %}我的收藏{% endblock %}
+
+{% block right_tab %}
+    <div class="head">
+        <ul class="tab_header messagehead">
+            <li><a href="{% url 'users:my_favourite' 'org' %}">课程机构</a></li>
+            <li class="active"><a href="{% url 'users:my_favourite' 'teacher' %}">授课教师</a></li>
+            <li><a href="{% url 'users:my_favourite' 'courses' %}">公开课程</a></li>
+        </ul>
+    </div>
+{% endblock %}
+
+{% block right_content %}
+    {# 没有数据显示时调用父模板的显示内容 #}
+    {% ifequal my_teachers.count 0 %}
+        {{ block.super }}
+    {% else %}
+        <div class="messagelist">
+            {% for item in my_teachers %}
+                <div class=" butler_list butler-fav-box">
+                    <dl class="des users">
+                        <dt>
+                            <a href="{% url 'orgs:teachers_info' item.id %}">
+                                <img width="100" height="100" src="{{ MEDIA_URL }}{{ item.images }}"
+                                     alt=""/>
+                            </a>
+                        </dt>
+                        <dd>
+                            <h1>
+                                <a href="{% url 'orgs:teachers_info' item.id %}">
+                                    {{ item.name }}{% if item.is_approval %}<span class="key">认证教师</span>{% endif %}
+                                </a>
+                            </h1>
+                            <ul class="cont clearfix" style="margin-top: 10px">
+                                <li class="time">工作年限：<span>{{ item.work_years }}</span></li>
+                                <li class="c7">
+                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;课程数：<span>{{ item.courses_set.count }}</span></li>
+                            </ul>
+                            <ul class="cont clearfix">
+                                <li class="time">工作公司：<span>{{ item.work_company }}</span></li>
+                                <li class="c7">
+                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;公司职位：<span>{{ item.work_position }}</span>
+                                </li>
+                            </ul>
+                        </dd>
+                        <div class="delete jsDeleteFav_teacher" data-favid="{{ item.id }}"></div>
+                    </dl>
+                </div>
+            {% endfor %}
+        </div>
+    {% endifequal %}
+{% endblock %}
+
+{% block end-js %}
+    <script>
+        $('.jsDeleteFav_teacher').on('click', function () {
+            var _this = $(this),
+                favid = _this.attr('data-favid');
+            $.ajax({
+                cache: false,
+                type: "POST",
+                url: "{% url 'operations:add_fav' %}",
+                data: {
+                    fav_type: 3,
+                    fav_id: favid,
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                },
+                async: true,
+                success: function () {
+                    Dml.fun.showTipsDialog({
+                        title: '取消收藏',
+                        h2: '取消收藏成功!',
+                    });
+                    Dml.fun.winReload();
+                }
+            });
+        });
+    </script>
+{% endblock %}

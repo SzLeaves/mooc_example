@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="zh">
+{% load static %}
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}标题{% endblock %}</title>
+
+    {% block css %}
+        <link rel="stylesheet" type="text/css" href="{% static 'css/reset.css' %}">
+        <link rel="stylesheet" type="text/css" href="{% static 'css/animate.css' %}">
+        <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+    {% endblock %}
+    {% block js %}
+        <script src="{% static 'js/jquery.min.js' %}"></script>
+    {% endblock %}
+</head>
+
+{% block main-content %}
+{% endblock %}
+</html>
