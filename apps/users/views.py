@@ -165,7 +165,7 @@ class ForgetPasswordView(View):
     def post(self, request):
         forget_password_form = ForgetPasswordForm(request.POST)
         email = request.POST.get('email', '')
-        is_user_exist = len(UserProfile.objects.filter(username=email, email=email)) == 1
+        is_user_exist = len(UserProfile.objects.filter(email=email)) == 1
         if forget_password_form.is_valid():
             if is_user_exist:
                 send_register_email(email, 'forget', path=request.headers['Referer'])

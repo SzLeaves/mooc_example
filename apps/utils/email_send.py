@@ -26,11 +26,17 @@ def send_register_email(email, send_type='register', path=None):
 
     # 发送邮件
     if send_type == 'register':
+        # 如果有url参数则取前面的url路径
+        path = path[:path.index('/users/register/')]
+
         email_title = "在线注册激活链接"
         email_body = "请点击链接激活帐号：%s/users/active/%s" % (path, email_record.code)
         send_mail(email_title, email_body, EMAIL_HOST_USER, [email])
 
     elif send_type == 'forget':
+        # 如果有url参数则取前面的url路径
+        path = path[:path.index('/users/forgetpwd/')]
+
         email_title = "找回密码链接"
         email_body = "请点击链接找回帐号密码：%s/users/forget/%s" % (path, email_record.code)
         send_mail(email_title, email_body, EMAIL_HOST_USER, [email])
