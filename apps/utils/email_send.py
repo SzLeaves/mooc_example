@@ -8,7 +8,7 @@ from apps.users.models import EmailVerifyRecord
 from mooc_example.settings import EMAIL_HOST_USER
 
 
-def send_register_email(email, send_type='register'):
+def send_register_email(email, send_type='register', path=None):
     # 创建验证码对象
     email_record = EmailVerifyRecord()
 
@@ -27,12 +27,12 @@ def send_register_email(email, send_type='register'):
     # 发送邮件
     if send_type == 'register':
         email_title = "在线注册激活链接"
-        email_body = "请点击链接激活帐号：http://127.0.0.1:8000/users/active/%s" % email_record.code
+        email_body = "请点击链接激活帐号：%s/users/active/%s" % (path, email_record.code)
         send_mail(email_title, email_body, EMAIL_HOST_USER, [email])
 
     elif send_type == 'forget':
         email_title = "找回密码链接"
-        email_body = "请点击链接找回帐号密码：http://127.0.0.1:8000/users/forget/%s" % email_record.code
+        email_body = "请点击链接找回帐号密码：%s/users/forget/%s" % (path, email_record.code)
         send_mail(email_title, email_body, EMAIL_HOST_USER, [email])
 
     elif send_type == 'update':

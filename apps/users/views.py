@@ -86,7 +86,7 @@ class RegisterView(View):
 
             # 提交数据库
             new_user.save()
-            send_register_email(username, 'register')
+            send_register_email(username, 'register', path=request.headers['Referer'])
 
             return render(request, "login.html", {"err_msg": "注册成功，请查看邮箱激活账户"})
 
@@ -168,7 +168,7 @@ class ForgetPasswordView(View):
         is_user_exist = len(UserProfile.objects.filter(username=email, email=email)) == 1
         if forget_password_form.is_valid():
             if is_user_exist:
-                send_register_email(email, 'forget')
+                send_register_email(email, 'forget', path=request.headers['Referer'])
                 return render(request, "login.html", {"err_msg": "重置密码链接已发送"})
             else:
                 return render(request, "forgetpwd.html",
