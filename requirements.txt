@@ -5,4 +5,3 @@ django-import-export
 mysqlclient
 django-simpleui
 django-pure-pagination
-uwsgi
