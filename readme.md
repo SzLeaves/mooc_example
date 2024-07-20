@@ -4,7 +4,7 @@
 ## Dependencies 依赖
 可使用`pip install -r requirements.txt`直接安装依赖
 * Django
-* django-simpleui
+* django-simpleui==2023.8.28
 * django-pure-pagination
 * django-simple-captcha
 * django-import-export
@@ -12,6 +12,21 @@
 * mysqlclient
 * uwsgi
 
+## Deploy 部署
+1. **在安装好依赖后运行：**`python ./manage.py collectstatic`将admin所需的静态文件复制到`static`文件夹下
+   
+   > 在配置文件中`DEBUG`默认为`False`  
+   > 如果你只是在开发环境中使用，可以设置为`True`并配置`STATICFILES_DIRS`，移除`STATIC_ROOT`  
+   > Django会根据`STATICFILES_DIRS`自动查找静态文件的路径
+   
+2. 配置数据库：
+   ```bash
+   python ./manage.py makemigrations
+   python ./manage.py migrate
+   ```
+   
+3. 设置管理员账户密码：`python ./manage.py createsuperuser` 根据提示操作即可  
+   
 ## Tips 提示
 1. 在Django 3.2.15 下运行测试  
 2. 管理员界面使用了[simpleui](https://github.com/newpanjing/simpleui)  
