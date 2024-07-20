@@ -3,5 +3,5 @@ pymysql
 django-simple-captcha
 django-import-export
 mysqlclient
-django-simpleui
+django-simpleui==2023.8.28
 django-pure-pagination
